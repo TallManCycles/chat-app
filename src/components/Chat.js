@@ -1,4 +1,4 @@
-import {React, useState} from 'react'
+import React, { useState } from 'react'
 import './Chat.css'
 import { Configuration, OpenAIApi } from 'openai'
 
@@ -6,7 +6,9 @@ const Chat = () => {
     const [messages, setMessages] = useState([])
     const [isLoading, setIsLoading] = useState(false)
 
-    console.log(process.env.REACT_APP_OPENAI_API_KEY)
+    if (!process.env.REACT_APP_OPENAI_API_KEY) {
+        console.error("Missing API KEY in file");
+      } 
 
     const configuration = new Configuration({
         apiKey: process.env.REACT_APP_OPENAI_API_KEY,
@@ -27,8 +29,6 @@ const Chat = () => {
 
         setIsLoading(true)
 
-        console.log("started event")
-
         const input = event.target.elements.message;
         const text = input.value;
 
@@ -45,16 +45,24 @@ const Chat = () => {
                 max_tokens: Number.parseInt(maxTokens),
                 temperature: 0,
               })
-    
-            response.data.choices.forEach(message => {
-                addMessage(message.text);
-                });    
+
+              if (!response) {
+                console.log("response is invalid")
+              } else {
+                if (response.data.choices.length > 0 ) {
+
+                response.data.choices.forEach(message => {
+                    addMessage(message.text);
+                    });  
+
+                } else {
+                    console.log("response has no choices")
+                }
+              }
             
-        } catch (error) {
-            addMessage(error.message)
+        } catch (e) {
+            console.log(e)
         }
-        
-        console.log("loading finished")
 
         setIsLoading(false)
         }
