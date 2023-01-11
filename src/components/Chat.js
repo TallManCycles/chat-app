@@ -6,6 +6,8 @@ const Chat = () => {
     const [messages, setMessages] = useState([])
     const [isLoading, setIsLoading] = useState(false)
 
+    console.log(process.env.REACT_APP_OPENAI_API_KEY)
+
     const configuration = new Configuration({
         apiKey: process.env.REACT_APP_OPENAI_API_KEY,
       });
