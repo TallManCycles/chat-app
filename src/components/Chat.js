@@ -24,6 +24,63 @@ const Chat = () => {
         setMessages([]);
     }
 
+    async function TextCompletion(openai, model, text, maxTokens, addMessage) {
+      try {
+          const response = await openai.createCompletion({
+            model: model,
+            prompt: text,
+            max_tokens: Number.parseInt(maxTokens),
+            temperature: 0,
+          })
+    
+          if (!response) {
+            console.log("response is invalid")
+          } else {
+            if (response.data.choices.length > 0) {
+      
+              response.data.choices.forEach(message => {
+                addMessage(message.text)
+              })
+      
+            } else {
+              console.log("response has no choices")
+            }
+          }
+    
+        } catch (e) {
+          console.log(e.message)
+        }
+      }
+    
+      async function ChatCompletion(openai, model, text, maxTokens, addMessage) {
+        
+        try {
+          const response = await openai.createChatCompletion({
+            model: model,
+            messages: [{role: "user", content: text}],
+          });
+          console.log(response.data.choices[0].message);
+      
+          if (!response) {
+            console.log("response is invalid")
+          } else {
+            if (response.data.choices.length > 0) {
+      
+              response.data.choices.forEach(message => {
+                console.log(message)
+                addMessage(message.message['content'])
+              })
+      
+            } else {
+              console.log("response has no choices")
+            }
+          }
+      
+        } catch (e) {
+          console.log(e.message)
+        }
+    }
+
     const handleSubmit = async (event) => {
         event.preventDefault();
 
@@ -36,36 +93,21 @@ const Chat = () => {
         const model = options.value
 
         const tokens = event.target.elements.maxTokens;
+
+        if (!tokens.value) {
+            tokens.value = 500;
+        }
+
         const maxTokens = tokens.value;
 
-        try {
-            const response = await openai.createCompletion({
-                model: model,
-                prompt: text,
-                max_tokens: Number.parseInt(maxTokens),
-                temperature: 0,
-              })
-
-              if (!response) {
-                console.log("response is invalid")
-              } else {
-                if (response.data.choices.length > 0 ) {
-
-                response.data.choices.forEach(message => {
-                    addMessage(message.text);
-                    });  
-
-                } else {
-                    console.log("response has no choices")
-                }
-              }
-            
-        } catch (e) {
-            console.log(e)
+        if (model === 'gpt-3.5-turbo') {
+          await ChatCompletion(openai, model, text, maxTokens, addMessage)
+        } else {
+          await TextCompletion(openai, model, text, maxTokens, addMessage) 
         }
 
         setIsLoading(false)
-        }
+      }
 
   return (
     <div className='chat-container'>
@@ -77,10 +119,11 @@ const Chat = () => {
         </div>
         <form className='chat-form' 
             onSubmit={handleSubmit}>
-            <textarea rows={10} placeholder='enter text here' name='message'/>
+            <textarea className="chat-area" rows={10} placeholder='enter text here' name='message'/>
             <button type="submit" disabled={isLoading}>Send</button>
             <button onClick={handleClearMessages} disabled={isLoading}>Clear Messages</button>
             <select name="models">
+                <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
                 <option value="text-davinci-003">text-davinci-003</option>
                 <option value="text-curie-001">text-curie-001 faster and lower cost</option>
                 <option value="text-babbage-001">text-babbage-001 very fast, and lower cost</option>
