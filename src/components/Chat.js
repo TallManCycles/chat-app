@@ -39,13 +39,6 @@ function Chat() {
     setIsLoading(false);
   }
 
-  function handleKeyDown(event) {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      sendButtonRef.current.click();
-    }
-  }
-
   async function handleSubmit(event) {
     event.preventDefault();
     setIsLoading(true);
@@ -63,7 +56,8 @@ function Chat() {
       let response;
       if (model === 'gpt-3.5-turbo') {
         response = await ChatCompletion(model, message);
-      } else {
+      } 
+      else {
         response = await TextCompletion(model, message, maxTokens);
       }
 
@@ -96,13 +90,14 @@ function Chat() {
       
       </div>
       <form className='chat-form' onSubmit={handleSubmit}>
+        {!isLoading || <div className="spinner"/> }
         <textarea className='chat-area' rows={2} placeholder='enter text here' name='message'
           onKeyPress={(e) => {
-          if (e.key === 'Enter') {
-            e.preventDefault();
-            document.getElementById('send-button').click();
-          }
-        }} />
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              document.getElementById('send-button').click();
+            }
+          }} />
         <button type='submit' id='send-button' disabled={isLoading}>
           Send
         </button>
