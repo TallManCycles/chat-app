@@ -43,6 +43,8 @@ function Chat() {
     event.preventDefault();
     setIsLoading(true);
 
+    console.log("started submit");
+
     const input = event.target.elements.message;
     const message = input.value;
 
@@ -101,7 +103,7 @@ function Chat() {
         <button type='submit' id='send-button' disabled={isLoading}>
           Send
         </button>
-        <button onClick={clearMessages} disabled={isLoading}>
+        <button type='button' onClick={clearMessages} disabled={isLoading}>
           Clear Messages
         </button>
         <select name='models'>
