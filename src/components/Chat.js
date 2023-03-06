@@ -106,11 +106,10 @@ function Chat() {
       
       </div>
       <form className='chat-form' onSubmit={handleSubmit}>
-        <textarea className='chat-area' rows={6} placeholder='enter text here' name='message'
+        <textarea className='chat-area' rows={2} placeholder='enter text here' name='message'
           onKeyPress={(e) => {
           if (e.key === 'Enter') {
             e.preventDefault();
-            // e.target.form.dispatchEvent(new Event('submit', { cancelable: true }));
             document.getElementById('send-button').click();
           }
         }} />
