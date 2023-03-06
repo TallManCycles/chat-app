@@ -1,7 +1,6 @@
 import React, { useState, useRef } from 'react';
 import './Chat.css';
 import { Configuration, OpenAIApi } from 'openai';
-import Prism from 'prismjs';
 
 const configuration = new Configuration({
   apiKey: process.env.REACT_APP_OPENAI_API_KEY,
@@ -86,14 +85,6 @@ function Chat() {
     <div className='chat-container'>
       <div className='chat-messages'>
       {messages.map((message, index) => {
-          if (message.startsWith("```") && message.endsWith("```")) {
-            const code = message.slice(3, -3);
-            return (
-              <pre key={index} className="language-javascript">
-                <code dangerouslySetInnerHTML={{ __html: Prism.highlight(code, Prism.languages.javascript, 'javascript') }} />
-              </pre>
-            );
-          } else {
             return (
               <div key={index}>
                 {message.split("\n").map((paragraph, index) => (
@@ -101,7 +92,6 @@ function Chat() {
                 ))}
               </div>
             );
-          }
         })}
       
       </div>
